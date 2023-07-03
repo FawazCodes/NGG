@@ -107,13 +107,14 @@ button:not(:disabled):hover {
 }
 
 @media (max-width: 500px) {
-  input, button {
+  input,
+  button {
     flex: 100%;
     margin: 0.5rem 0;
   }
 }
 
-/* Add styles for the random gradient background */
+/* Random gradient background */
 body {
   font-family: 'Raleway', sans-serif;
   display: flex;
