@@ -1,87 +1,107 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Generate random gradient colors and set them as CSS variables
-  const color1 = getRandomColor();
-  const color2 = getRandomColor();
-  document.documentElement.style.setProperty("--color1", color1);
-  document.documentElement.style.setProperty("--color2", color2);
-});
+// Generate a random 4-digit secret number for the computer to guess
+function generateSecretNumber() {
+  let secretNumber = "";
+  const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-function getRandomColor() {
-  const randomColor = `hsl(${Math.random() * 360}, 50%, 50%)`;
-  return randomColor;
-}
+  while (secretNumber.length < 4) {
+    const randomIndex = Math.floor(Math.random() * digits.length);
+    const digit = digits[randomIndex];
 
-const startBtn = document.getElementById("start-btn");
-const message = document.getElementById("message");
-const guessGrid = document.getElementById("guess-grid");
-
-let secretNumber = "";
-let attempts = 0;
-
-startBtn.addEventListener("click", () => {
-  // Prompt the player to enter a secret 4-digit number
-  const playerNumber = prompt("Think of a secret 4-digit number (with no repeated digits). Press OK when you're ready.");
-
-  // Validate the player's number
-  if (isValidNumber(playerNumber)) {
-    secretNumber = playerNumber;
-    attempts = 0;
-    message.textContent = "The computer is trying to guess your number...";
-    startBtn.disabled = true;
-    guessGrid.innerHTML = "";
-
-    // Start the computer's guessing process
-    setTimeout(computerGuess, 1000);
-  } else {
-    alert("Invalid number! Please try again.");
-  }
-});
-
-function isValidNumber(number) {
-  return /^\d{4}$/.test(number) && new Set(number).size === 4;
-}
-
-function computerGuess() {
-  const guess = generateRandomNumber();
-
-  // Display the computer's guess in the grid
-  const guessElement = document.createElement("div");
-  guessElement.textContent = guess;
-  guessGrid.appendChild(guessElement);
-
-  attempts++;
-
-  // Check if the computer guessed the correct number
-  if (guess === secretNumber) {
-    message.textContent = `The computer guessed your number (${guess}) correctly in ${attempts} attempts!`;
-    startBtn.disabled = false;
-  } else {
-    // Provide feedback to the computer and continue guessing
-    const feedback = compareNumbers(guess, secretNumber);
-    message.textContent = `Attempt ${attempts}: The computer guessed ${guess}, but it's ${feedback}.`;
-    setTimeout(computerGuess, 1000);
-  }
-}
-
-function generateRandomNumber() {
-  let number = "";
-  while (number.length < 4) {
-    const randomDigit = Math.floor(Math.random() * 10);
-    if (!number.includes(randomDigit.toString())) {
-      number += randomDigit.toString();
+    if (!secretNumber.includes(digit)) {
+      secretNumber += digit;
     }
   }
-  return number;
+
+  return secretNumber;
 }
 
-function compareNumbers(guess, secretNumber) {
-  let feedback = "";
-  for (let i = 0; i < 4; i++) {
+// Check if the computer's guess matches the secret number
+function isCorrectGuess(guess, secretNumber) {
+  return guess === secretNumber;
+}
+
+// Calculate the number of correct digits at the right position
+function calculateCorrectDigits(guess, secretNumber) {
+  let count = 0;
+  for (let i = 0; i < guess.length; i++) {
     if (guess[i] === secretNumber[i]) {
-      feedback += "+";
-    } else if (secretNumber.includes(guess[i])) {
-      feedback += "-";
+      count++;
     }
   }
-  return feedback;
+  return count;
 }
+
+// Calculate the number of correct digits at the wrong position
+function calculateMisplacedDigits(guess, secretNumber) {
+  let count = 0;
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] !== secretNumber[i] && secretNumber.includes(guess[i])) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// Clear the input field and focus on it
+function clearFeedbackInput() {
+  const feedbackInput = document.getElementById("feedback");
+  feedbackInput.value = "";
+  feedbackInput.focus();
+}
+
+// Submit the feedback and process the computer's next guess
+function submitFeedback() {
+  const feedbackInput = document.getElementById("feedback");
+  const feedback = feedbackInput.value.trim();
+
+  if (feedback.length === 0) {
+    return; // Ignore empty feedback
+  }
+
+  const guess = document.getElementById("guess").textContent;
+  const correctDigits = parseInt(feedback.match(/\+(\d+)/)[1]);
+  const misplacedDigits = parseInt(feedback.match(/-(\d+)/)[1]);
+
+  if (isCorrectGuess(guess, secretNumber)) {
+    document.getElementById("result").textContent = "The computer cracked the code! You lose.";
+    feedbackInput.disabled = true;
+    feedbackInput.placeholder = "";
+  } else {
+    const nextGuess = getNextGuess(guess, correctDigits, misplacedDigits);
+    document.getElementById("guess").textContent = nextGuess;
+    clearFeedbackInput();
+  }
+}
+
+// Get the computer's next guess based on the feedback
+function getNextGuess(previousGuess, correctDigits, misplacedDigits) {
+  // Implementation of the computer's strategy to generate the next guess
+  // You can modify this function to improve the computer's guessing algorithm
+
+  // Here's a simple implementation that generates a random guess
+  let nextGuess = "";
+
+  while (nextGuess.length < 4) {
+    const randomIndex = Math.floor(Math.random() * 10);
+    const digit = randomIndex.toString();
+
+    if (!nextGuess.includes(digit)) {
+      nextGuess += digit;
+    }
+  }
+
+  return nextGuess;
+}
+
+// Reset the game to play again
+function resetGame() {
+  secretNumber = generateSecretNumber();
+  document.getElementById("guess").textContent = "----";
+  document.getElementById("result").textContent = "";
+  document.getElementById("feedback").disabled = false;
+  clearFeedbackInput();
+}
+
+// Start a new game
+let secretNumber = generateSecretNumber();
+resetGame();
