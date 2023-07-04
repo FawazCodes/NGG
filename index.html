@@ -1,26 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Secret Number Game</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
-    <h1>Secret Number Game</h1>
-    <div id="game-container">
-      <div id="guess-container">
-        <h2>Computer's Guess:</h2>
-        <p id="guess"></p>
-      </div>
-      <div id="feedback-container">
-        <h2>Your Feedback:</h2>
-        <input type="text" id="feedback" placeholder="+X -X 0">
-        <button onclick="submitFeedback()">Submit</button>
-      </div>
-      <div id="result-container">
-        <h2 id="result"></h2>
-        <button onclick="resetGame()">Play Again</button>
-      </div>
+<head>
+  <title>Number Guessing Game</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <h1>Number Guessing Game</h1>
+
+  <div id="player1">
+    <h2>Player 1</h2>
+    <label for="player1Number">Secret Number:</label>
+    <input type="text" id="player1Number" placeholder="Enter your secret number" required>
+  </div>
+
+  <div id="player2">
+    <h2>Player 2</h2>
+    <label for="player2Number">Secret Number:</label>
+    <input type="text" id="player2Number" placeholder="Enter your secret number" required>
+  </div>
+
+  <div id="buttons">
+    <button id="randomNumbersBtn">Generate Random Numbers</button>
+    <button id="startBtn">Start Game</button>
+  </div>
+
+  <div id="game">
+    <div id="turnIndicator"></div>
+    <div id="guess">
+      <h2>Current Guess:</h2>
+      <input type="text" id="guessInput" placeholder="Enter your guess" required>
+      <button id="submitBtn">Submit</button>
     </div>
-    <script src="script.js"></script>
-  </body>
+    <div id="feedback">
+      <h2>Feedback:</h2>
+      <ul id="feedbackList"></ul>
+    </div>
+  </div>
+
+  <button id="resetBtn">Reset</button>
+
+  <script src="script.js"></script>
+</body>
 </html>
